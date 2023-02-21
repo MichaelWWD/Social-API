@@ -1,4 +1,0 @@
- Users
-    -> Register
-    -> Login
-    -> Logout
