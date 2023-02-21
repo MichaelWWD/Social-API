@@ -23,5 +23,5 @@
 
 5. Messages 
 
-6. Explore 
+6. Explore/Events
 
