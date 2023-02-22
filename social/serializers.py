@@ -103,3 +103,14 @@ class PostCommentSerializer(serializers.ModelSerializer):
         profile = models.Profile.objects.get(user_id=self.context['user_id'])
         post_id = self.context['post_id']
         return models.PostComment.objects.create(profile_id=profile.id, post_id=post_id, **validated_data)
+
+
+class AddCommentReplySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = models.CommentReply
+        fields = ['id', 'comment','text', 'created_at']
+
+    def create(self, validated_data):
+        profile = models.Profile.objects.get(user_id=self.context['user_id'])
+        return models.CommentReply.objects.create(profile_id=profile.id, **validated_data)
+

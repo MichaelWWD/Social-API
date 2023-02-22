@@ -116,3 +116,14 @@ class PostCommentViewSet(ModelViewSet):
             'post_id': self.kwargs['post_pk'],
             'user_id': self.request.user.id
             }    
+
+
+class CommentReplyViewSet(ModelViewSet):
+    http_method_names = ['get', 'post', 'delete']
+    queryset = models.CommentReply.objects.all()
+    serializer_class = serializers.AddCommentReplySerializer
+
+    def get_serializer_context(self):
+        return {
+            'user_id': self.request.user.id
+            }  

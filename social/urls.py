@@ -18,6 +18,8 @@ posts_router = routers.NestedDefaultRouter(router, 'posts', lookup='post')
 posts_router.register('likes', views.PostLikeViewSet, basename='post-likes')
 posts_router.register('comments', views.PostCommentViewSet, basename='post-comments')
 
+router.register('comments/replies', views.CommentReplyViewSet, basename='comment-replies')
+
 
 # URLConf
 urlpatterns = router.urls + profiles_router.urls + posts_router.urls
