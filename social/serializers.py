@@ -111,9 +111,18 @@ class PostCommentSerializer(serializers.ModelSerializer):
 
 
 class CommentReplySerializer(serializers.ModelSerializer):
+    comment_id = serializers.IntegerField()
+
     class Meta:
         model = models.CommentReply
-        fields = ['id', 'comment','text', 'created_at']
+        fields = ['id', 'comment_id','text', 'created_at']
+
+    def validate_comment_id(self, comment_id):
+        if not models.PostComment.objects.filter(pk=comment_id).exists():
+            raise serializers.ValidationError(
+                'No comment with the given ID was found.')
+        return comment_id
+
 
     def create(self, validated_data):
         profile = models.Profile.objects.get(user_id=self.context['user_id'])
@@ -122,8 +131,9 @@ class CommentReplySerializer(serializers.ModelSerializer):
 
 class ListCommentReply(serializers.ModelSerializer):
     profile = SimpleProfileSerializer(read_only=True)
+
     class Meta:
         model = models.CommentReply
-        fields = ['id', 'profile','text', 'comment', 'created_at']
+        fields = ['id', 'profile','text', 'comment_id', 'created_at']
 
     
