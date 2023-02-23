@@ -94,9 +94,14 @@ class PostLikeSerializer(serializers.ModelSerializer):
 
 class PostCommentSerializer(serializers.ModelSerializer):
     profile = SimpleProfileSerializer(read_only=True)
+    reply_count = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = models.PostComment
-        fields = ['id', 'profile', 'text', 'created_at']
+        fields = ['id', 'profile', 'text', 'reply_count','created_at']
+
+    def get_reply_count(self, comments) -> int:
+        return comments.replies.count()
 
 
     def create(self, validated_data):
@@ -105,7 +110,7 @@ class PostCommentSerializer(serializers.ModelSerializer):
         return models.PostComment.objects.create(profile_id=profile.id, post_id=post_id, **validated_data)
 
 
-class AddCommentReplySerializer(serializers.ModelSerializer):
+class CommentReplySerializer(serializers.ModelSerializer):
     class Meta:
         model = models.CommentReply
         fields = ['id', 'comment','text', 'created_at']
@@ -114,3 +119,11 @@ class AddCommentReplySerializer(serializers.ModelSerializer):
         profile = models.Profile.objects.get(user_id=self.context['user_id'])
         return models.CommentReply.objects.create(profile_id=profile.id, **validated_data)
 
+
+class ListCommentReply(serializers.ModelSerializer):
+    profile = SimpleProfileSerializer(read_only=True)
+    class Meta:
+        model = models.CommentReply
+        fields = ['id', 'profile','text', 'comment', 'created_at']
+
+    
