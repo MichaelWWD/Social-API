@@ -42,6 +42,12 @@ class PostImage(models.Model):
     image = models.ImageField(upload_to='social/posts/images')
 
 
+class PostVideo(models.Model):
+    post  = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='videos')
+    file = models.FileField(upload_to='social/posts/videos')
+
+
+
 class PostLike(models.Model):
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE)
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_likes')
