@@ -37,14 +37,9 @@ class Post(models.Model):
         ordering = ['-created_at']
 
 
-class PostImage(models.Model):
-    post  = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(upload_to='social/posts/images')
-
-
-class PostVideo(models.Model):
-    post  = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='videos')
-    file = models.FileField(upload_to='social/posts/videos')
+class PostFile(models.Model):
+    post  = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='files')
+    file = models.FileField(upload_to='social/posts/files')
 
 
 

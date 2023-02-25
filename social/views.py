@@ -4,6 +4,7 @@ from rest_framework import mixins , status
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.parsers import MultiPartParser
 from rest_framework.exceptions import ValidationError
 from social.permissions import IsAdminOrCurrentProfile, IsAdminOrReadOnly
 from . import serializers, models
@@ -74,7 +75,8 @@ class PostViewSet(ModelViewSet):
     queryset = models.Post.objects\
         .select_related('profile')\
         .prefetch_related('post_likes')\
-        .prefetch_related('images').all()
+        .prefetch_related('files')\
+        .all()
     serializer_class = serializers.PostSerializer
     filterset_fields = ['profile_id']
 

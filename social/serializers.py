@@ -37,25 +37,26 @@ class ProfileFollowingListSerializer(serializers.ModelSerializer):
         fields = ['id', 'following', 'followers']
 
 
-class PostImageSerializer(serializers.ModelSerializer):
+
+class PostFileSerializer(serializers.ModelSerializer):
     class Meta:
-        model = models.PostImage
-        fields = ['id','image']
+        model = models.PostFile
+        fields = ['id','file']
 
 
 class PostSerializer(serializers.ModelSerializer):
     profile = SimpleProfileSerializer(read_only=True)
     comments_count = serializers.SerializerMethodField(read_only=True)
     likes_count = serializers.SerializerMethodField(read_only=True)
-    images = PostImageSerializer(many=True, required=False, read_only=True)
-    uploaded_images = serializers.ListField(
+    files = PostFileSerializer(many=True, required=False, read_only=True)
+    uploaded_files = serializers.ListField(
         child = serializers.ImageField(max_length = 1000000, allow_empty_file = False, use_url = False), required=False, write_only=True)
 
     class Meta:
         model = models.Post
         fields = [
             'id', 'profile', 'content', 
-            'images', 'uploaded_images', 
+            'files', 'uploaded_files',
             'comments_count' ,'likes_count',
             'created_at', 'updated_at']
     
@@ -69,12 +70,14 @@ class PostSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         profile = models.Profile.objects.get(user_id=self.context['user_id'])
         try: 
-            uploaded_images = validated_data.pop("uploaded_images")
+            uploaded_files = validated_data.pop("uploaded_files")
             post = models.Post.objects.create(profile_id=profile.id, **validated_data)
-            for image in uploaded_images:
-                post_image = models.PostImage.objects.create(post=post,image=image)
+            for file in uploaded_files:
+                post_files = models.PostFile.objects.create(post=post, file=file)
+
         except KeyError:
             post = models.Post.objects.create(profile_id=profile.id, **validated_data)
+
         return post
 
 
