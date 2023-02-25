@@ -79,16 +79,15 @@ class PostViewSet(ModelViewSet):
         .all()
     serializer_class = serializers.PostSerializer
     filterset_fields = ['profile_id']
+    parser_classes = (MultiPartParser,)
 
     def get_permissions(self):
         if self.request.method in ['PATCH', 'DELETE']:
             return [IsAdminOrCurrentProfile()]
         return [IsAuthenticatedOrReadOnly()]
 
-
     def get_serializer_context(self):
         return {'user_id': self.request.user.id}
-
 
 
 class PostLikeViewSet(ModelViewSet):

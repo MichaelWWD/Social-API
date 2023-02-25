@@ -50,7 +50,7 @@ class PostSerializer(serializers.ModelSerializer):
     likes_count = serializers.SerializerMethodField(read_only=True)
     files = PostFileSerializer(many=True, required=False, read_only=True)
     uploaded_files = serializers.ListField(
-        child = serializers.ImageField(max_length = 1000000, allow_empty_file = False, use_url = False), required=False, write_only=True)
+        child = serializers.FileField(max_length = 1000000, allow_empty_file = False, use_url = False), required=False, write_only=True)
 
     class Meta:
         model = models.Post
