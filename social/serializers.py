@@ -94,12 +94,46 @@ class PostLikeSerializer(serializers.ModelSerializer):
 
 class PostCommentSerializer(serializers.ModelSerializer):
     profile = SimpleProfileSerializer(read_only=True)
+    reply_count = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = models.PostComment
-        fields = ['id', 'profile', 'text', 'created_at']
+        fields = ['id', 'profile', 'text', 'reply_count','created_at']
+
+    def get_reply_count(self, comments) -> int:
+        return comments.replies.count()
 
 
     def create(self, validated_data):
         profile = models.Profile.objects.get(user_id=self.context['user_id'])
         post_id = self.context['post_id']
         return models.PostComment.objects.create(profile_id=profile.id, post_id=post_id, **validated_data)
+
+
+class CommentReplySerializer(serializers.ModelSerializer):
+    comment_id = serializers.IntegerField()
+
+    class Meta:
+        model = models.CommentReply
+        fields = ['id', 'comment_id','text', 'created_at']
+
+    def validate_comment_id(self, comment_id):
+        if not models.PostComment.objects.filter(pk=comment_id).exists():
+            raise serializers.ValidationError(
+                'No comment with the given ID was found.')
+        return comment_id
+
+
+    def create(self, validated_data):
+        profile = models.Profile.objects.get(user_id=self.context['user_id'])
+        return models.CommentReply.objects.create(profile_id=profile.id, **validated_data)
+
+
+class ListCommentReply(serializers.ModelSerializer):
+    profile = SimpleProfileSerializer(read_only=True)
+
+    class Meta:
+        model = models.CommentReply
+        fields = ['id', 'profile','text', 'comment_id', 'created_at']
+
+    

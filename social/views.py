@@ -4,6 +4,7 @@ from rest_framework import mixins , status
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.exceptions import ValidationError
 from social.permissions import IsAdminOrCurrentProfile, IsAdminOrReadOnly
 from . import serializers, models
 
@@ -116,3 +117,29 @@ class PostCommentViewSet(ModelViewSet):
             'post_id': self.kwargs['post_pk'],
             'user_id': self.request.user.id
             }    
+
+
+class CommentReplyViewSet(ModelViewSet):
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['comment_id']
+    http_method_names = ['get', 'post', 'delete']
+    queryset = models.CommentReply.objects.all()
+    def get_serializer_context(self):
+        return {
+            'user_id': self.request.user.id
+            }  
+    
+    def get_queryset(self):
+        comment_id = self.request.query_params.get('comment_id')
+        if not comment_id:
+            raise ValidationError({'comment_id': 'This field is required.'})
+        queryset = super().get_queryset()
+        queryset = queryset.filter(comment_id=comment_id)
+        return queryset
+
+
+    def get_serializer_class(self):
+        if self.action == 'list':
+            return serializers.ListCommentReply
+        return serializers.CommentReplySerializer
+        

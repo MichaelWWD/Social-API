@@ -56,3 +56,9 @@ class PostComment(models.Model):
     created_at  = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
+
+class CommentReply(models.Model):
+    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
+    text = models.TextField()
+    comment = models.ForeignKey(PostComment, on_delete=models.CASCADE, related_name='replies')
+    created_at  = models.DateTimeField(auto_now_add=True)
