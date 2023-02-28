@@ -33,7 +33,7 @@ class ProfileViewSet(ModelViewSet):
 class ProfileActionViewSet(mixins.CreateModelMixin,GenericViewSet):
     serializer_class = serializers.ProfileFollowActionSerializer
     queryset = models.Profile.objects.all()
-
+    permission_classes = [IsAuthenticated]
 
     @action(detail=True, methods=['POST'], permission_classes=[IsAuthenticated])
     def follow(self, request, pk=None):
@@ -125,6 +125,7 @@ class CommentReplyViewSet(ModelViewSet):
     filterset_fields = ['comment_id']
     http_method_names = ['get', 'post', 'delete']
     queryset = models.CommentReply.objects.all()
+    permission_classes = [IsAuthenticatedOrReadOnly]
     def get_serializer_context(self):
         return {
             'user_id': self.request.user.id
