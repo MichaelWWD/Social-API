@@ -142,6 +142,6 @@ class CommentReplyViewSet(ModelViewSet):
 
     def get_serializer_class(self):
         if self.action == 'list':
-            return serializers.ListCommentReply
+            return serializers.ListCommentReplySerializer
         return serializers.CommentReplySerializer
         

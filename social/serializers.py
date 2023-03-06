@@ -132,7 +132,7 @@ class CommentReplySerializer(serializers.ModelSerializer):
         return models.CommentReply.objects.create(profile_id=profile.id, **validated_data)
 
 
-class ListCommentReply(serializers.ModelSerializer):
+class ListCommentReplySerializer(serializers.ModelSerializer):
     profile = SimpleProfileSerializer(read_only=True)
 
     class Meta:
